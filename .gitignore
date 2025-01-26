@@ -5,3 +5,8 @@
 *.mp3
 *.txt
 *.xlsx
+__pycache__/
+LibriSpeech/
+*/node_modules/
+*/build/
+Untitled.ipynb

@@ -1,0 +1,1 @@
+# Speech-to-Text and Emotion Recognition from Real time Audio Signals

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech-to-Text and Emotion Recognition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let lastAudioBlob = null; // To store the last recorded audio blob
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    lastAudioBlob = audioBlob; // Save the last recorded audio blob
+                    audioChunks = []; // Clear the chunks for the next recording
+
+                    // Display the audio as a playback element
+                    const audioURL = URL.createObjectURL(audioBlob);
+                    const audioElement = document.getElementById('audioPlayback');
+                    audioElement.src = audioURL;
+                    audioElement.style.display = 'block';
+
+                    // Process the recorded audio
+                    await processAudio(audioBlob);
+                };
+
+                mediaRecorder.start();
+                document.getElementById('status').innerText = 'Recording...';
+            } catch (err) {
+                alert('Error accessing microphone: ' + err.message);
+            }
+        }
+
+        async function processAudio(audioBlob) {
+            // Send the audio to the server
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'recorded_audio.wav');
+
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server responded with status ${response.status}`);
+                }
+
+                const result = await response.json();
+                document.getElementById('result').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                console.error('Error processing audio:', error.message);
+                document.getElementById('result').innerText = `Error: ${error.message}`;
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                document.getElementById('status').innerText = 'Recording stopped.';
+            }
+        }
+
+        async function reprocessAudio() {
+            if (!lastAudioBlob) {
+                alert('No previous recording found to reprocess.');
+                return;
+            }
+
+            // Process the last recorded audio again
+            document.getElementById('status').innerText = 'Reprocessing last recorded audio...';
+            await processAudio(lastAudioBlob);
+        }
+
+    </script>
+</head>
+<body>
+    <h1>Audio Recorder</h1>
+    <p id="status">Press "Start Recording" to record your audio.</p>
+    <button onclick="startRecording()">Start Recording</button>
+    <button onclick="stopRecording()">Stop Recording</button>
+    <br><br>
+    <audio id="audioPlayback" controls style="display: none;"></audio>
+    <h2>Result:</h2>
+    <!-- New Button to Reprocess Audio -->
+    <button onclick="reprocessAudio()">Reprocess Last Recording</button>
+    <pre id="result"></pre>
+</body>
+</html>
+

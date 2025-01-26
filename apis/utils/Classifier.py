@@ -2,7 +2,7 @@ from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 import os
 import pickle
 
@@ -112,3 +112,15 @@ def trainingModel(X, Y, model_type='svm', model_path=''):
         pickle.dump(clf, f)
 
     print(f"Model saved to {model_path}")
+
+def get_accuracy(y_test, y_pred):
+    # Calculate accuracy
+    accuracy = accuracy_score(y_test, y_pred)
+    print("Accuracy:", accuracy)
+    return accuracy
+
+def get_confusion_matrix(y_test, y_pred):
+    # Confusion matrix
+    cm = confusion_matrix(y_test, y_pred)
+    print("Confusion Matrix:\n", cm)
+    return cm

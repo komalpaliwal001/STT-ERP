@@ -2,6 +2,9 @@ import librosa
 import numpy as np
 import tensorflow as tf
 import tensorflow_hub as hub
+import torchaudio
+import torch
+from transformers import Wav2Vec2FeatureExtractor, Wav2Vec2ForCTC
 
 def extract_tensorflow_embeddings(audio_path, max_length=123):
     """
@@ -51,3 +54,36 @@ def extract_tensorflow_embeddings(audio_path, max_length=123):
         raise FileNotFoundError(f"The audio file at path '{audio_path}' was not found.")
     except Exception as e:
         raise RuntimeError(f"An error occurred while extracting embeddings: {str(e)}")
+
+
+# Define a function to predict emotion from audio
+def predict_emotion(audio_path):
+    # Load the audio file
+    audio, rate = librosa.load(audio_path, sr=16000)
+
+    # Load the pre-trained model and feature extractor
+    feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained("r-f/wav2vec-english-speech-emotion-recognition")
+    model = Wav2Vec2ForCTC.from_pretrained("r-f/wav2vec-english-speech-emotion-recognition")
+
+    # Print available labels for debugging
+    # print("Available labels:", model.config.id2label)
+    
+    # Extract features
+    inputs = feature_extractor(audio, sampling_rate=rate, return_tensors="pt", padding=True)
+    
+    # Make predictions
+    with torch.no_grad():
+        outputs = model(inputs.input_values)
+    
+    # Process predictions
+    predictions = torch.nn.functional.softmax(outputs.logits.mean(dim=1), dim=-1)  # Average over sequence length
+    predicted_label = torch.argmax(predictions, dim=-1)
+
+    # Check if predicted label exists in id2label mapping
+    try:
+        emotion = model.config.id2label[predicted_label.item()]
+    except KeyError:
+        print(f"KeyError: Predicted label {predicted_label.item()} not found in id2label.")
+        return None
+    
+    return emotion
