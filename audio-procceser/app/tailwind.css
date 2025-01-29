@@ -4,9 +4,59 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
 
+  @apply bg-white dark:bg-gray-950;
+  color: #1d2427;
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
 }
+
+.logo{
+    border: 4px solid #cfcfcf;
+    border-radius: 80px;
+}
+.logo-1 {
+    border: 3px solid #09104f;
+    border-radius: 60px;
+}
+.true-emo-logo{
+    height: 538px;
+    width: 499px;
+    background-position: 758px -105px;
+    background-image: url("../public/true-emos-logo-1.webp");
+    border-radius: 262px;
+}
+.emo-logo{
+    height: 673px;
+    width: 660px;
+    background-position: 837px -175px;
+    background-image: url("../public/true-emos-logo-3.webp");
+    border-radius: 370px;
+}
+
+.background-gradient {    background: linear-gradient(135deg, #80dfff 0%, #d280ff 100%)   }
+
+.audio-recoder {    padding: 6rem;    border-right: 2px solid #1d2427;  }
+
+.audio-upload {    padding: 6rem 4rem 6rem 0;}
+
+input, .btn-default {    border: 1px solid #1d2427;    padding: 10px 20px;    border-radius: 30px;  }
+
+.audio-upload .input-group {    position: relative;}
+.audio-upload .input-group button {    position: absolute;    top: 0;    right: 0;  }
+
+h3 {    font-weight: bold;  }
+
+.emotions {    height: 294px;    width: 310px;    background-image: url("../public/Emotion_Logos_Transparent.png"); }
+.sad{    height: 414px;    width: 390px;    background-position: -75px -486px   }
+.natural{    height: 307px;    width: 252px;    background-position: 880px 915px;   }
+.happy{    background-position: -556px -120px;  }
+.angry{    height: 385px;    background-position: -548px -488px;    }
+
+.divider svg {    overflow: hidden;    margin-top: -4rem;    margin-left: -1rem;    z-index: 1000;}
+.divider .cls-1 {    fill: #000000;     }
+.divider .cls-2 {    fill: #80dfff;     }
+.divider .cls-3 {    fill: #d280ff;     }
+
+.footer-bg {    position: relative;    margin-top: -5%;    overflow: hidden;    z-index: 100;   }

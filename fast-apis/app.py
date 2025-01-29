@@ -101,11 +101,9 @@ def training():
     except Exception as e:
         return jsonify({"error": f"Model training failed: {str(e)}"}), 500
 
-
 @app.route('/')
 def home():
     return render_template('index.html')
-
 
 @app.route('/process', methods=['POST'])
 @cors_decorator
