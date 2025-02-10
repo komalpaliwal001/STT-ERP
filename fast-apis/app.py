@@ -10,9 +10,13 @@ from utils.Classifier import getClassificationReport, trainingModel
 from utils.AudioRecorder import record_pyaudio
 from utils.FeatureExetraction import extract_features, extract_features_from_waveform
 from functools import wraps
+from flask_cors import CORS
 
 # Initialize the Flask app
 app = Flask(__name__, template_folder='../templates/')
+
+# Allow only the Remix frontend to access the API
+CORS(app, resources={r"/*": {"origins": "http://localhost:3003"}})
 
 # CORS Handling Functions
 def add_cors_headers(response):
@@ -22,7 +26,7 @@ def add_cors_headers(response):
         if headers:
             response.headers.extend(headers)
 
-    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Origin'] = '*, http://localhost:3003'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     return response
@@ -106,7 +110,7 @@ def home():
     return render_template('index.html')
 
 @app.route('/process', methods=['POST'])
-@cors_decorator
+# @cors_decorator
 def process_audio():
     if 'audio' not in request.files:
         return jsonify({"error": "No audio file provided"}), 400
@@ -114,6 +118,7 @@ def process_audio():
     audio_file = request.files['audio']
     file_path = "recorded_audio.wav"
     audio_file.save(file_path)
+    print(audio_file)
 
     mime_type, _ = mimetypes.guess_type(file_path)
     if mime_type != 'audio/wav':
@@ -125,7 +130,7 @@ def process_audio():
 
     # Load audio data into a NumPy array
     audio_data, _ = librosa.load(file_path, sr=16000)
-
+    print(audio_data)
     # Extract features from the loaded audio data
     features = extract_features_from_waveform(audio_data, 16000)
 

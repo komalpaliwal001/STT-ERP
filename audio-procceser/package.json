@@ -15,11 +15,14 @@
     "@remix-run/node": "^2.15.2",
     "@remix-run/react": "^2.15.2",
     "axios": "^1.7.9",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "express": "^4.21.2",
     "isbot": "^4.4.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-audio-visualize": "^1.2.0",
+    "react-dom": "^18.3.1",
+    "simple-speech-recognition": "^1.0.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.15.2",
