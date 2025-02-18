@@ -1,6 +1,4 @@
 import type { MetaFunction } from "@remix-run/node";
-import AudioRecorder from '~/components/AudioRecorder.jsx';
-import AudioUpload from '~/components/AudioUpload.jsx';
 import PolygonDivider from '~/components/icons/PolygonDivider.jsx';
 import TearBottomDivider from '~/components/icons/TearBottomDivider.jsx';
 import { NavLink } from "@remix-run/react";
@@ -31,13 +29,14 @@ export default function Index() {
                   />
               </div>
               <div className="flex flex-col items-center gap-6">
-                  <h1 className="text-4xl font-bold">Welcome to True Emos</h1>
-                  <span className="text-2xl font-bold">Speech-to-Text and Emotion Recognition from Audio</span>
+                  <h1 className="text-3xl font-bold">Welcome to True Emos</h1>
+                  <span className="text-2xl font-bold">Where Emotions Speak the Truth</span>
+                  {/* <span className="text-2xl font-bold">Speech-to-Text and Emotion Recognition from Audio</span> */}
                   <nav className="flex flex-col items-center gap-10 py-10">
-                      <NavLink to="/about" className="px-4 py-2 border  text-white-500 border-gray-950 rounded-lg">About</NavLink>
+                      <NavLink to="/traning-model" className="px-4 py-2 border text-white-500 border-gray-950 rounded-lg">Train Model</NavLink>
                       <NavLink to="/audio-recorder" className="px-4 py-2 border text-white-500 border-gray-950 rounded-lg">Record Audio</NavLink>
                       <NavLink to="/audio-upload" className="px-4 py-2 border text-white-500 border-gray-950 rounded-lg">Upload Audio</NavLink>
-                      <NavLink to="/traning" className="px-4 py-2 border text-white-500 border-gray-950 rounded-lg">Training</NavLink>
+                      <NavLink to="/about" className="px-4 py-2 border text-white-500 border-gray-950 rounded-lg">About True Emos</NavLink>
                   </nav>
               </div>
           </div>
@@ -51,7 +50,7 @@ export default function Index() {
                     </g>
                 </svg>
                 <div className="footer">
-                    <p>© {currentYear} True Emos — A Emotion Recognization Product </p>
+                    <p>© {currentYear} True Emos – Feel the Real Emotion. </p>
                 </div>
             </footer>
       </div>

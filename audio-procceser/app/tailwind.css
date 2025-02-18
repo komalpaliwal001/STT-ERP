@@ -51,7 +51,7 @@ body {
 
 
 
-    .logo{
+.logo{
     border: 4px solid #cfcfcf;
     border-radius: 80px;
 }
@@ -121,7 +121,7 @@ input, select, .btn-default {
     border: 1px solid #1d2427;
     padding: 10px 20px;
     border-radius: 30px;
-    width: 100px;
+    width: 150px;
     background-color: var(--oxford-blue);
 }
 
@@ -174,10 +174,20 @@ h3 {    font-weight: bold;  }
 
 .emotion-section {   height: 352px;    width: 100%;   }
 .emotions {    height: 294px;    width: 310px;    background-image: url("../public/Emotion_Logos_Transparent.png"); }
-.sad{    height: 414px;    width: 390px;    background-position: -75px -486px   }
-.natural{    height: 307px;    width: 252px;    background-position: 880px 915px;   }
-.happy{    background-position: -556px -120px;  }
-.angry{    height: 385px;    background-position: -548px -488px;    }
+.emotions .sad{    height: 414px;    width: 390px;    background-position: -75px -486px   }
+.emotions .natural{    height: 307px;    width: 252px;    background-position: 880px 915px;   }
+.emotions .happy{    background-position: -556px -120px;  }
+.emotions .angry{    height: 385px;    background-position: -548px -488px;    }
+
+
+.emot {    height: 180px; width: 240px; background-repeat: no-repeat;   }
+.emot.sad { background-image: url("../public/sad.jpg");      }
+.emot.natural { background-image: url("../public/natural.jpg");     }
+.emot.happy {   background-image: url("../public/happy.jpg");    }
+.emot.angry {   background-image: url("../public/angry.jpg");     }
+.emot.disgust {    background-image: url("../public/disgust.jpg");    }
+.emot.fear {   background-image: url("../public/fear.jpg");   }
+.emot.surprise {   background-image: url("../public/surprise.jpg");   }
 
 .divider svg {    overflow: hidden;    margin-top: -4rem;    margin-left: -1rem;    z-index: 1000;}
 .divider .cls-1 {    fill: #000000;     }

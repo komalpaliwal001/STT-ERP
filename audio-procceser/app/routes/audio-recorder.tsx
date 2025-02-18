@@ -1,8 +1,10 @@
 import { useState, useRef } from 'react';
 import axios from 'axios';
+import { useFetcher } from '@remix-run/react';
 import { AudioVisualizer } from 'react-audio-visualize';
 
 export default function AudioRecorder () {
+    const fetcher = useFetcher();
     const [isRecording, setIsRecording] = useState(false);
     const [blob, setBlob] = useState<Blob>();
     const visualizerRef = useRef<HTMLCanvasElement>(null)
@@ -89,8 +91,8 @@ export default function AudioRecorder () {
                   </div>
                 )}
                 {emotion &&
-                  <div className='emotion-section w-[200px]'>
-                    <div className={`emotions ${emotion}`} ></div>
+                  <div className='emot'>
+                    <div className={`emot ${emotion}`} ></div>
                   </div>
                 }
             </section>

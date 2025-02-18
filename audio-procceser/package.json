@@ -20,6 +20,7 @@
     "express": "^4.21.2",
     "isbot": "^4.4.0",
     "react": "^18.3.1",
+    "react-audio-player": "^0.17.0",
     "react-audio-visualize": "^1.2.0",
     "react-dom": "^18.3.1",
     "simple-speech-recognition": "^1.0.2"

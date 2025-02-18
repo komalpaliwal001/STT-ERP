@@ -11,12 +11,16 @@ import os
 import mimetypes
 import wave
 import json
-from vosk import Model, KaldiRecognizer
+# from vosk import Model, KaldiRecognizer
 from sklearn.cluster import KMeans
 from transformers import pipeline
-from utils.Classifier import getClassificationReport, trainingModel
+from utils.Classifier import getClassificationReport, trainingModel, getEmotions, assign_labels
 from utils.AudioRecorder import record_pyaudio
 from utils.FeatureExetraction import extract_features, extract_features_from_waveform
+from scipy.io import wavfile
+import noisereduce as nr
+import whisper
+model = whisper.load_model("base")  # Try "small", "medium", or "large"
 
 app = FastAPI()
 
@@ -33,11 +37,15 @@ app.add_middleware(
 stt_pipeline = pipeline("automatic-speech-recognition", model="openai/whisper-small")
 
 # Load Vosk model
-model = Model("models/vosk-model-en-us-0.22")
+# voskModel = Model("models/vosk-model-en-us-0.22")
 
 # labels = {0: 'happy', 1: 'neutral', 2: 'sad'}
-labels = {0: 'happy', 1: 'neutral', 2: 'sad', 3: 'angry', 4: 'disgust', 5: 'fear', 6: 'surprise'}
 
+labels = getEmotions()
+
+
+# Define emotion labels
+emotion_mapping = getEmotions()
 
 @app.get("/get_classification_report")
 async def get_classification_report():
@@ -49,28 +57,36 @@ async def get_classification_report():
         raise HTTPException(status_code=500, detail=f"Failed to get classification report: {str(e)}")
 
 @app.post("/training")
-async def training(file: UploadFile = File(None),  model: str = 'svm', labels: dict = None):
+async def training(file: UploadFile = File(None),  model: str = None, labels: dict = None):
     """Trains the model using uploaded file or provided data."""
-    print(file)
+    print(file, model, labels)
     try:
         if file:
             df = pd.read_csv(file.file)
             features = df.drop(columns=['labels'], errors='ignore')
 
-            # Use K-Means to cluster features into 3 groups (neutral, sad, happy)
-            num_clusters = 7
-            kmeans = KMeans(n_clusters=num_clusters, random_state=42)
-            cluster_labels = kmeans.fit_predict(features)
+            # Use K-Means to cluster features into groups 
+            # num_clusters = len(getEmotions())
+            # kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+            # cluster_labels = kmeans.fit_predict(features)
 
-            labels = df['labels'] if 'labels' in df.columns else cluster_labels
+            metadata = np.random.randint(0, len(labels), size=len(features)) 
+
+            # Assign combined labels
+            combined_labels = assign_labels(features, metadata)
+
+            labels = df['labels'] if 'labels' in df.columns else combined_labels
 
             if labels is None:
                 raise HTTPException(status_code=400, detail="Labels are not provided in the CSV or payload")
         else:
             raise HTTPException(status_code=400, detail="Features and labels must be provided")
 
-        trainingModel(features, labels, model_type=model)
-        return {"message": "Model file created successfully"}
+        traningData = trainingModel(features, labels, model)
+        return {
+            # "accuracy": traningData.accuracy,
+            "message": "Model file created successfully",
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Model training failed: {str(e)}")
 
@@ -135,32 +151,19 @@ async def process_audio(audio_file: UploadFile = File(...), model: str = "svm"):
         # Load and extract features
         audio_data, _ = librosa.load(file_path, sr=16000)
         features = extract_features_from_waveform(audio_data, 16000)
-        print(_)
+
+        # Speech-to-Text
+        text = stt_pipeline(file_path)['text']
+ 
         emotion = await prediction(features, model)
         print(emotion)
         # **Ensure the output is JSON-serializable**
         if isinstance(features, np.ndarray):
             features = features.tolist()  # Convert NumPy array to list
 
-        # Open audio file
-        wf = wave.open(file_path, "rb")
-        recognizer = KaldiRecognizer(model, wf.getframerate())
-
-        # Read audio & transcribe
-        text_result = ""
-        while True:
-            data = wf.readframes(4000)
-            if len(data) == 0:
-                break
-            if recognizer.AcceptWaveform(data):
-                text_result += json.loads(recognizer.Result())["text"] + " "
-
-        print("Extracted Text:", text_result)
-
         return {
             "emotion": emotion['predicted_value'],
-            "text": text_result
-            ,
+            "text": text,
             "features": features
         }
     except Exception as e:
